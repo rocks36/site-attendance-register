@@ -2,6 +2,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const navButtons = document.querySelectorAll(".nav-btn");
   const tabContents = document.querySelectorAll(".tab-content");
 
+  // SIDEBAR TOGGLE LOGIC
+  const sidebarEl = document.getElementById("app-sidebar");
+  const mainContentEl = document.querySelector(".main-content");
+  const toggleBtn = document.getElementById("sidebar-toggle-btn");
+  const closeSidebarBtn = document.getElementById("sidebar-close-btn");
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      if (window.innerWidth <= 768) {
+        sidebarEl.classList.toggle("mobile-open");
+      } else {
+        sidebarEl.classList.toggle("collapsed");
+        mainContentEl.classList.toggle("expanded");
+      }
+    });
+  }
+
+  if (closeSidebarBtn) {
+    closeSidebarBtn.addEventListener("click", () => {
+      sidebarEl.classList.remove("mobile-open");
+      sidebarEl.classList.add("collapsed");
+      mainContentEl.classList.add("expanded");
+    });
+  }
+
   navButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       navButtons.forEach(b => b.classList.remove("active"));
@@ -10,6 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const targetTab = document.getElementById(btn.getAttribute("data-tab"));
       if (targetTab) targetTab.classList.add("active");
       if (btn.getAttribute("data-tab") === "analytics-tab") renderCharts();
+
+      if (window.innerWidth <= 768) {
+        sidebarEl.classList.remove("mobile-open");
+      }
     });
   });
 
@@ -27,7 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const attendancePctEl = document.getElementById("kpi-attendance-pct");
   const workerForm = document.getElementById("worker-form");
   const workersDirectoryEl = document.getElementById("workers-directory-list");
-  const advanceForm = document.getElementById("advance-form");
   const advanceWorkerSelect = document.getElementById("advance-worker-select");
   const calendarDaysEl = document.getElementById("calendar-days");
   const calendarMonthTitleEl = document.getElementById("calendar-month-title");
@@ -315,7 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
       
       if (type === "worker") {
         html += `<table style="width:100%; border-collapse:collapse; margin-top:10px; font-size:0.85rem;">`;
-        html += `<tr style="background:var(--bg-color);"><th style="padding:6px;">Worker ID</th><th style="padding:6px;">Name</th><th style="padding:6px;">Category</th><th style="padding:6px;">Daily Wage</th><th style="padding:6px;">Days Present</th><th style="padding:6px;">Total Earned (Filtered)</th></tr>`;
+        html += `<tr style="background:#f1f5f9;"><th style="padding:6px;">Worker ID</th><th style="padding:6px;">Name</th><th style="padding:6px;">Category</th><th style="padding:6px;">Daily Wage</th><th style="padding:6px;">Days Present</th><th style="padding:6px;">Total Earned (Filtered)</th></tr>`;
         
         let grandTotalWorkerWages = 0;
         let grandTotalDaysPresent = 0;
@@ -328,7 +356,7 @@ document.addEventListener("DOMContentLoaded", () => {
           grandTotalWorkerWages += workerTotal;
           grandTotalDaysPresent += daysPresentCount;
 
-          html += `<tr style="border-bottom:1px solid var(--border-color);">
+          html += `<tr style="border-bottom:1px solid #e2e8f0;">
             <td style="padding:6px;">${w["Worker ID"]}</td>
             <td style="padding:6px;">${w["Worker Name"]}</td>
             <td style="padding:6px;">${w["Category"]}</td>
@@ -342,7 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
       
       } else {
         html += `<table style="width:100%; border-collapse:collapse; margin-top:10px; font-size:0.85rem;">`;
-        html += `<tr style="background:var(--bg-color);"><th style="padding:6px;">Date</th><th style="padding:6px;">Worker</th><th style="padding:6px;">Status</th><th style="padding:6px;">OT Hours</th><th style="padding:6px;">Wage</th></tr>`;
+        html += `<tr style="background:#f1f5f9;"><th style="padding:6px;">Date</th><th style="padding:6px;">Worker</th><th style="padding:6px;">Status</th><th style="padding:6px;">OT Hours</th><th style="padding:6px;">Wage</th></tr>`;
         
         let totalWageSum = 0;
         let attendanceDaysCount = filteredRecords.filter(r => ["Present", "Paid Leave", "Half Day"].includes(r["Status"])).length;
@@ -350,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
         filteredRecords.forEach(r => {
           const wage = parseFloat(r["Calculated Wage"]) || 0;
           totalWageSum += wage;
-          html += `<tr style="border-bottom:1px solid var(--border-color);">
+          html += `<tr style="border-bottom:1px solid #e2e8f0;">
             <td style="padding:6px;">${String(r["Date"]).split("T")[0]}</td>
             <td style="padding:6px;">${r["Worker Name"]}</td>
             <td style="padding:6px;">${r["Status"]}</td>
@@ -361,6 +389,9 @@ document.addEventListener("DOMContentLoaded", () => {
         html += `</table>`;
         html += `<div style="margin-top: 15px; text-align: right; font-weight: bold; font-size: 1rem;">Total Attendance Records: ${attendanceDaysCount} Days | Total Wage Expense: ₹${totalWageSum.toFixed(2)}</div>`;
       }
+
+      // Add branding footer to report preview
+      html += `<div style="margin-top: 30px; padding-top: 10px; border-top: 1px dashed #cbd5e1; text-align: center; font-size: 0.8rem; color: #64748b;">Report generated & certified by <strong>arrowX Softwares</strong></div>`;
 
       outputEl.innerHTML = html;
     });
@@ -378,18 +409,25 @@ document.addEventListener("DOMContentLoaded", () => {
       printWindow.document.write(`
         <html>
           <head>
-            <title>Site Attendance Report</title>
+            <title>Site Attendance Report - arrowX Softwares</title>
             <style>
-              body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
+              body { font-family: Arial, sans-serif; padding: 20px; color: #333; display: flex; flex-direction: column; min-height: 95vh; }
+              .report-body { flex: 1; }
               h2, h3 { text-align: center; color: #111; }
               table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
               th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
               th { background-color: #f4f4f4; }
+              .print-footer { margin-top: 40px; padding-top: 10px; border-top: 1px solid #aaa; text-align: center; font-size: 11px; color: #555; }
             </style>
           </head>
           <body>
-            <h2>SAR Construction Management</h2>
-            ${reportOutput.innerHTML}
+            <div class="report-body">
+              <h2>SAR Construction Management</h2>
+              ${reportOutput.innerHTML}
+            </div>
+            <div class="print-footer">
+              Official Report Generated by <strong>arrowX Softwares</strong>
+            </div>
             <script>
               window.onload = function() {
                 window.print();
