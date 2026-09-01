@@ -10,8 +10,12 @@
 </head>
 <body>
   <div class="app-layout">
-    <aside class="sidebar">
-      <h2>Site Register</h2>
+    <!-- SIDEBAR MENU -->
+    <aside class="sidebar" id="app-sidebar">
+      <div class="sidebar-header">
+        <h2>Site Register</h2>
+        <button id="sidebar-close-btn" class="sidebar-close">&times;</button>
+      </div>
       <nav>
         <button class="nav-btn active" data-tab="dashboard-tab">Dashboard</button>
         <button class="nav-btn" data-tab="workers-tab">Worker Management</button>
@@ -20,105 +24,119 @@
         <button class="nav-btn" data-tab="analytics-tab">Analytics</button>
       </nav>
     </aside>
+
+    <!-- MAIN APP CONTENT AREA -->
     <main class="main-content">
-      <!-- DASHBOARD TAB -->
-      <section id="dashboard-tab" class="tab-content active">
-        <header class="tab-header"><h1>Dashboard & Attendance Calendar</h1></header>
-        <div class="kpi-grid">
-          <div class="kpi-card"><h3>Total Workers</h3><p id="kpi-total-workers">0</p></div>
-          <div class="kpi-card"><h3>Present Today</h3><p id="kpi-present-today">0</p></div>
-          <div class="kpi-card"><h3>Absent Today</h3><p id="kpi-absent-today">0</p></div>
-          <div class="kpi-card"><h3>Monthly Labour Cost</h3><p id="kpi-monthly-cost">₹0</p></div>
-          <div class="kpi-card"><h3>Attendance %</h3><p id="kpi-attendance-pct">0%</p></div>
-        </div>
-        <div class="card">
-          <div class="calendar-header">
-            <h2 id="calendar-month-title">Calendar</h2>
-            <div class="calendar-nav">
-              <button id="prev-month" class="secondary-btn">&lt; Prev</button>
-              <button id="next-month" class="secondary-btn">Next &gt;</button>
+      <header class="top-nav-bar">
+        <button id="sidebar-toggle-btn" class="menu-toggle-btn">☰ Menu</button>
+        <span class="app-title-mobile">SAR Construction</span>
+      </header>
+
+      <div class="content-body">
+        <!-- DASHBOARD TAB -->
+        <section id="dashboard-tab" class="tab-content active">
+          <header class="tab-header"><h1>Dashboard & Attendance Calendar</h1></header>
+          <div class="kpi-grid">
+            <div class="kpi-card"><h3>Total Workers</h3><p id="kpi-total-workers">0</p></div>
+            <div class="kpi-card"><h3>Present Today</h3><p id="kpi-present-today">0</p></div>
+            <div class="kpi-card"><h3>Absent Today</h3><p id="kpi-absent-today">0</p></div>
+            <div class="kpi-card"><h3>Monthly Labour Cost</h3><p id="kpi-monthly-cost">₹0</p></div>
+            <div class="kpi-card"><h3>Attendance %</h3><p id="kpi-attendance-pct">0%</p></div>
+          </div>
+          <div class="card">
+            <div class="calendar-header">
+              <h2 id="calendar-month-title">Calendar</h2>
+              <div class="calendar-nav">
+                <button id="prev-month" class="secondary-btn">&lt; Prev</button>
+                <button id="next-month" class="secondary-btn">Next &gt;</button>
+              </div>
+            </div>
+            <p class="calendar-subtitle">Click any date to mark or edit attendance.</p>
+            <div class="calendar-grid-header"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+            <div id="calendar-days" class="calendar-grid"></div>
+          </div>
+        </section>
+
+        <!-- WORKERS TAB -->
+        <section id="workers-tab" class="tab-content">
+          <header class="tab-header"><h1>Worker Management</h1></header>
+          <div class="card">
+            <h2>Add Worker</h2>
+            <form id="worker-form" class="form-grid">
+              <input type="text" id="worker-name" placeholder="Worker Name" required>
+              <input type="text" id="mobile" placeholder="Mobile Number" required>
+              <input type="text" id="category" placeholder="Category (e.g. Mason)" required>
+              <input type="text" id="site-name" placeholder="Site Name" required>
+              <input type="number" id="daily-wage" placeholder="Daily Wage (₹)" required>
+              <input type="number" id="ot-rate" placeholder="Overtime Rate / Hr" required>
+              <input type="text" id="notes" placeholder="Notes">
+              <button type="submit" class="primary-btn" id="save-worker-btn">Save Worker</button>
+            </form>
+          </div>
+          <div class="card">
+            <h2>Worker Directory</h2>
+            <div id="workers-directory-list" style="overflow-x: auto;">Loading...</div>
+          </div>
+        </section>
+
+        <!-- ADVANCES TAB -->
+        <section id="advances-tab" class="tab-content">
+          <header class="tab-header"><h1>Advance Management</h1></header>
+          <div class="card">
+            <h2>Record Worker Advance</h2>
+            <form id="advance-form" class="form-grid">
+              <input type="date" id="advance-date" required>
+              <select id="advance-worker-select" required><option value="">Select Worker</option></select>
+              <input type="number" id="advance-amount" placeholder="Amount (₹)" required>
+              <input type="text" id="advance-reason" placeholder="Reason (e.g. Medical)" required>
+              <button type="submit" class="primary-btn">Record Advance</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- REPORTS TAB -->
+        <section id="reports-tab" class="tab-content">
+          <header class="tab-header"><h1>Reports & Export Engine</h1></header>
+          <div class="card">
+            <h2>Filter Reports</h2>
+            <div class="form-grid report-filter-grid" style="align-items: center;">
+              <select id="report-type">
+                <option value="attendance">Attendance Report</option>
+                <option value="worker">Worker-Wise Report</option>
+                <option value="site">Site-Wise Report</option>
+                <option value="payroll">Payroll Report</option>
+              </select>
+              <div>
+                <label style="font-size: 0.8rem; display:block;">From:</label>
+                <input type="date" id="report-start-date" style="padding: 6px; width:100%;">
+              </div>
+              <div>
+                <label style="font-size: 0.8rem; display:block;">To:</label>
+                <input type="date" id="report-end-date" style="padding: 6px; width:100%;">
+              </div>
+              <button id="generate-report-btn" class="primary-btn">Generate</button>
+              <button id="export-pdf-btn" class="secondary-btn" style="background:#4b5563; color:white; border:none; padding:10px 12px; border-radius:4px; cursor:pointer;">Export PDF</button>
             </div>
           </div>
-          <p class="calendar-subtitle">Click any date to mark or edit attendance.</p>
-          <div class="calendar-grid-header"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
-          <div id="calendar-days" class="calendar-grid"></div>
-        </div>
-      </section>
-
-      <!-- WORKERS TAB -->
-      <section id="workers-tab" class="tab-content">
-        <header class="tab-header"><h1>Worker Management</h1></header>
-        <div class="card">
-          <h2>Add Worker</h2>
-          <form id="worker-form" class="form-grid">
-            <input type="text" id="worker-name" placeholder="Worker Name" required>
-            <input type="text" id="mobile" placeholder="Mobile Number" required>
-            <input type="text" id="category" placeholder="Category (e.g. Mason)" required>
-            <input type="text" id="site-name" placeholder="Site Name" required>
-            <input type="number" id="daily-wage" placeholder="Daily Wage (₹)" required>
-            <input type="number" id="ot-rate" placeholder="Overtime Rate / Hr" required>
-            <input type="text" id="notes" placeholder="Notes">
-            <button type="submit" class="primary-btn" id="save-worker-btn">Save Worker</button>
-          </form>
-        </div>
-        <div class="card">
-          <h2>Worker Directory</h2>
-          <div id="workers-directory-list">Loading...</div>
-        </div>
-      </section>
-
-      <!-- ADVANCES TAB -->
-      <section id="advances-tab" class="tab-content">
-        <header class="tab-header"><h1>Advance Management</h1></header>
-        <div class="card">
-          <h2>Record Worker Advance</h2>
-          <form id="advance-form" class="form-grid">
-            <input type="date" id="advance-date" required>
-            <select id="advance-worker-select" required><option value="">Select Worker</option></select>
-            <input type="number" id="advance-amount" placeholder="Amount (₹)" required>
-            <input type="text" id="advance-reason" placeholder="Reason (e.g. Medical)" required>
-            <button type="submit" class="primary-btn">Record Advance</button>
-          </form>
-        </div>
-      </section>
-
-      <!-- REPORTS TAB -->
-      <section id="reports-tab" class="tab-content">
-        <header class="tab-header"><h1>Reports & Export Engine</h1></header>
-        <div class="card">
-          <h2>Filter Reports</h2>
-          <div class="form-grid" style="align-items: center;">
-            <select id="report-type">
-              <option value="attendance">Attendance Report</option>
-              <option value="worker">Worker-Wise Report</option>
-              <option value="site">Site-Wise Report</option>
-              <option value="payroll">Payroll Report</option>
-            </select>
-            <div>
-              <label style="font-size: 0.8rem; display:block;">From:</label>
-              <input type="date" id="report-start-date" style="padding: 6px; width:100%;">
-            </div>
-            <div>
-              <label style="font-size: 0.8rem; display:block;">To:</label>
-              <input type="date" id="report-end-date" style="padding: 6px; width:100%;">
-            </div>
-            <button id="generate-report-btn" class="primary-btn">Generate</button>
-            <button id="export-pdf-btn" class="secondary-btn" style="background:#4b5563; color:white; border:none; padding:10px 12px; border-radius:4px; cursor:pointer;">Export PDF</button>
+          <div class="card">
+            <div id="report-output" style="margin-top: 15px; overflow-x: auto;"></div>
           </div>
-        </div>
-        <div class="card">
-          <div id="report-output" style="margin-top: 15px; overflow-x: auto;"></div>
-        </div>
-      </section>
+        </section>
 
-      <!-- ANALYTICS TAB -->
-      <section id="analytics-tab" class="tab-content">
-        <header class="tab-header"><h1>Analytics Dashboard</h1></header>
-        <div class="analytics-grid">
-          <div class="card"><h2>Attendance Trend</h2><canvas id="trendChart"></canvas></div>
-          <div class="card"><h2>Present vs Absent</h2><canvas id="ratioChart"></canvas></div>
-        </div>
-      </section>
+        <!-- ANALYTICS TAB -->
+        <section id="analytics-tab" class="tab-content">
+          <header class="tab-header"><h1>Analytics Dashboard</h1></header>
+          <div class="analytics-grid">
+            <div class="card"><h2>Attendance Trend</h2><canvas id="trendChart"></canvas></div>
+            <div class="card"><h2>Present vs Absent</h2><canvas id="ratioChart"></canvas></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- APP FOOTER BRANDING -->
+      <footer class="app-footer">
+        <p>Powered & Maintained by <span class="brand-name">arrowX Softwares</span></p>
+      </footer>
     </main>
   </div>
 
